@@ -9,7 +9,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 public class MessageTemplate {
     @Autowired
     private MessageSource messageSource;
-
     public String message(String key, String... value) {
         return messageSource.getMessage(key, value, LocaleContextHolder.getLocale());
     }

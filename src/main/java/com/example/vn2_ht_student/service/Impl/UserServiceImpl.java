@@ -10,6 +10,7 @@ import com.example.vn2_ht_student.model.dto.request.UserRequestDto;
 import com.example.vn2_ht_student.repository.RolePermissionScopeRepository;
 import com.example.vn2_ht_student.repository.UserRepository;
 import com.example.vn2_ht_student.security.JwtProvider;
+import com.example.vn2_ht_student.service.MediaStorageService;
 import com.example.vn2_ht_student.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,6 +23,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private final MediaStorageService mediaStorageService;
     private  final  UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final   PasswordEncoder passwordEncoder;
@@ -67,6 +69,10 @@ public class UserServiceImpl implements UserService {
         if(request.getFullName() !=null && request.getFullName().isBlank())user.setFullName(request.getFullName());
         if (request.getMsv() !=null && request.getMsv().isBlank())user.setMsv(request.getMsv());
         if(request.getPassword() !=null && request.getPassword().isBlank())user.setPassword(request.getPassword());
+        if (request.getImg() != null) {
+            Long imageId = mediaStorageService.saveBase64ImageAndReturnId(request.getImg());
+            user.setImg(imageId.toString());
+        }
         if(request.getImg() !=null && request.getImg().isBlank())user.setImg(request.getImg());
         User User = userRepository.save(user);
         return new UserDto(User);
