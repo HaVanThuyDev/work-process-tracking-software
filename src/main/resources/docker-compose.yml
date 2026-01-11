@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 11032003
+      MYSQL_DATABASE: HT_STUDENT
+    ports:
+      - "3306:3306"
+
+  employee-app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
