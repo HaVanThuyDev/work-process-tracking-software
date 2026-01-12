@@ -15,7 +15,7 @@ public class MenuController {
 
     private final MenuService menuService;
 
-    @GetMapping
+    @GetMapping("/getlist")
     public ResponseEntity<List<MenuResponseDto>> getMenusByCurrentUser() {
         List<MenuResponseDto> menus = menuService.getMenusByCurrentUser();
         return ResponseEntity.ok(menus);
