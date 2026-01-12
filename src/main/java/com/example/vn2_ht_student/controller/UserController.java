@@ -7,6 +7,7 @@ import com.example.vn2_ht_student.model.dto.request.UserRequestDto;
 import com.example.vn2_ht_student.model.entity.User;
 import com.example.vn2_ht_student.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-public class Usercontroller {
+public class UserController {
     private final UserService userService;
     @GetMapping("/list")
     public SuccessResponse<List<UserReponseDto>> getAllUsers (){
@@ -30,9 +31,9 @@ public class Usercontroller {
             userService.update(id, request);
             return ResponseEntity.ok("update Employee success");
         }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body("erorr"+e.getMessage());
+            return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
         }catch (Exception e){
-            return ResponseEntity.badRequest().body("Employee update failed.!");
+            return ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @PostMapping("/delete/{id}")
@@ -41,9 +42,9 @@ public class Usercontroller {
             userService.delete(id);
             return ResponseEntity.ok("delete success");
         }catch (IllegalAccessError e){
-            return ResponseEntity.badRequest().body("error"+e.getMessage());
+            return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
         }catch (Exception e){
-            return ResponseEntity.internalServerError().body("Employee update failed.!");
+            return ResponseEntity.internalServerError().body(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @GetMapping("/search/")

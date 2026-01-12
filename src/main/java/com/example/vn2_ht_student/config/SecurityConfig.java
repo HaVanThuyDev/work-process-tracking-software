@@ -25,7 +25,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(e -> e.accessDeniedHandler(customAccessDeniedHandler))
-                .authorizeHttpRequests(auth ->auth.requestMatchers("/auth/**","/menus","/tasks/**").permitAll().anyRequest().authenticated()).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .authorizeHttpRequests(auth ->auth.requestMatchers("/auth/**","/menus","/tasks/**","/user/**").permitAll().anyRequest().authenticated()).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
