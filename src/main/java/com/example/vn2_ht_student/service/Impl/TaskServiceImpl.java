@@ -9,11 +9,16 @@ import com.example.vn2_ht_student.model.dto.request.TaskCreateRequest;
 import com.example.vn2_ht_student.model.dto.request.UpdateTaskStatusRequest;
 import com.example.vn2_ht_student.model.entity.*;
 import com.example.vn2_ht_student.model.enums.Action;
+import com.example.vn2_ht_student.model.enums.ResourceType;
+import com.example.vn2_ht_student.model.enums.Role;
 import com.example.vn2_ht_student.model.enums.TaskStatus;
 import com.example.vn2_ht_student.repository.*;
+import com.example.vn2_ht_student.security.SecurityUtils;
+import com.example.vn2_ht_student.security.annotation.PermissionCheck;
 import com.example.vn2_ht_student.service.ActivityLogService;
 import com.example.vn2_ht_student.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,10 +35,15 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public TaskResponseDto createTask(TaskCreateRequest request, Long userId) {
+    @PermissionCheck(roles = { Role.LEADER }, resource = ResourceType.TASK, action = Action.TASK_CREATE)
+    public TaskResponseDto createTask(TaskCreateRequest request) {
 
-        Group group = groupRepository.findById(request.getGroupId()).orElseThrow(() -> new RuntimeException("Group not found"));
+        Long userId = SecurityUtils.getCurrentUserId();
+        if (userId == null) {
+            throw new AccessDeniedException("Unauthenticated");
+        }
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Group group = groupRepository.findById(request.getGroupId()).orElseThrow(() -> new RuntimeException("Group not found"));
         Task task = new Task();
         task.setGroup(group);
         task.setTaskName(request.getTaskName());
@@ -43,16 +53,12 @@ public class TaskServiceImpl implements TaskService {
         task.setCreatedBy(user);
         task.setCreatedAt(LocalDateTime.now());
         Task saved = taskRepository.save(task);
-        activityLogService.log(
-                user,
-                group, Action.TASK_CREATE.toString(),
-                "Created task: " + saved.getTaskName()
-        );
         return mapToResponse(saved);
     }
 
 
     @Override
+//    @PermissionCheck(resource = Role.LEADER, action = Action.TASK_ASSIGN)
     public void assignTask(AssignTaskRequest request, Long userId) {
         Task task = taskRepository.findById(request.getTaskId()).orElseThrow();
         User assignee = userRepository.findById(request.getUserId()).orElseThrow();
@@ -70,6 +76,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+//    @PermissionCheck(resource = Role.LEADER, action = Action.TASK_UPDATE)
     public TaskResponseDto updateTaskStatus(Long taskId, UpdateTaskStatusRequest request, Long userId) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
         task.setStatus(request.getStatus());
@@ -87,13 +94,14 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
+//    @PermissionCheck(resource = Role.LEADER, action = Action.TASK_ASSIGN)
     public List<TaskResponseDto> getTasksByGroup(Long groupId) {
         return taskRepository.findByGroupId(groupId)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
     }
-
+//    @PermissionCheck(resource = Role.LECTURER, action = Action.TASK_ATTACHMENT_VIEW)
     private TaskResponseDto mapToResponse(Task task) {
         TaskResponseDto res = new TaskResponseDto();
         res.setId(task.getId());

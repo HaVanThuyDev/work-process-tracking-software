@@ -1,5 +1,6 @@
 package com.example.vn2_ht_student.model.entity;
 
+import com.example.vn2_ht_student.model.enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,4 +24,11 @@ public class TaskAssignment {
     private User user;
     @Column(name = "ASSIGNED_AT")
     private LocalDateTime assignedAt;
+    @Enumerated(EnumType.STRING)
+
+    @Column(name = "STATUS")
+    private TaskStatus status;
+
+    @Column(name = "COMPLETED_AT")
+    private LocalDateTime completedAt;
 }

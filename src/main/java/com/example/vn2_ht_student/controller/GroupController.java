@@ -16,10 +16,10 @@ public class GroupController {
 
     private final GroupService groupService;
 
-    @PostMapping("/add")
-    public ResponseEntity<?> create (@PathVariable Long creatorId, @RequestBody GroupRequestDto request){
+    @PostMapping("/create")
+    public ResponseEntity<?> create ( @RequestBody GroupRequestDto request){
         try {
-            groupService.create(request, creatorId);
+            groupService.create(request);
             return ResponseEntity.ok("successfully created");
         }catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body("error"+e.getMessage());
@@ -30,16 +30,5 @@ public class GroupController {
     @PostMapping("list")
     public List<GroupResponseDto> getGroupsByCourse( @PathVariable Long courseId){
         return groupService.getGroupsByCourse(courseId);
-    }
-    @PostMapping("/create")
-    public ResponseEntity<?> add(@PathVariable Long id, @PathVariable Long userId, @RequestBody GroupMemberResponseDto request){
-        try {
-            groupService.add(id,userId, request.getRoleInGroup());
-            return ResponseEntity.ok("successfully added");
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body("error"+e.getMessage());
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body("system error has occurred!");
-        }
     }
 }

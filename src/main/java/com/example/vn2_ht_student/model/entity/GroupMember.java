@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Setter
 @Table(name = "GROUP_MEMBERS")
-public class GroupMember {
+public class GroupMember extends BaseModifiedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,4 @@ public class GroupMember {
     @Column(name = "ROLE_IN_GROUP")
     private String roleInGroup;
 
-    @Column(name = "JOINED_AT")
-    private LocalDateTime joinedAt;
 }

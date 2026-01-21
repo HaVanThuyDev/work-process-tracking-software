@@ -1,6 +1,7 @@
 package com.example.vn2_ht_student.security.permission;
 
 import com.example.vn2_ht_student.model.enums.Action;
+import com.example.vn2_ht_student.model.enums.ResourceType;
 import com.example.vn2_ht_student.model.enums.Role;
 import com.example.vn2_ht_student.security.annotation.PermissionCheck;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,18 @@ public class PermissionAspect {
             JoinPoint joinPoint,
             PermissionCheck permissionCheck
     ) {
-        Role resource = permissionCheck.resource();
-        Action action = permissionCheck.action();
         Long id = extractId(joinPoint.getArgs());
-        if (!policy.allow(resource, action, id)) {
+
+        if (!policy.allow(
+                permissionCheck.roles(),
+                permissionCheck.resource(),
+                permissionCheck.action(),
+                id
+        )) {
             throw new AccessDeniedException("Access Denied");
-        }else {
         }
     }
+
 
     private Long extractId(Object[] args) {
         for (Object arg : args) {

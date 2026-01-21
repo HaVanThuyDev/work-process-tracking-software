@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
@@ -88,4 +89,23 @@ public class UserController {
                 .build()
         );
     }
+    @PostMapping("/import")
+    public ResponseEntity<?> importUsersFromExcel( @RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty");
+        }
+
+        if (!file.getOriginalFilename().endsWith(".xlsx")) {
+            return ResponseEntity.badRequest().body("Only .xlsx file is allowed");
+        }
+        try {
+            userService.importUsersFromExcel(file);
+            return ResponseEntity.ok("IMPORT USERS SUCCESS");
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("IMPORT FAILED: " + e.getMessage());
+        }
+    }
+
 }

@@ -19,8 +19,8 @@ public class TaskCotroller {
     private final TaskService taskService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createTask(@RequestBody TaskCreateRequest request, @RequestParam Long userId) {
-        taskService.createTask(request, userId);
+    public ResponseEntity<?> createTask(@RequestBody TaskCreateRequest request) {
+        taskService.createTask(request);
         return ResponseEntity.ok(ResponseDTO.builder()
                 .status("oke")
                 .code(Constants.HTTP_STATUS.SUCCESS)
