@@ -6,8 +6,7 @@ import com.example.vn2_ht_student.model.dto.request.GroupRequestDto;
 import java.util.List;
 
 public interface GroupService {
-    GroupResponseDto create(GroupRequestDto request, Long creatorId);
-    GroupMemberResponseDto add(Long groupId, Long userId, String role);
+    GroupResponseDto create(GroupRequestDto request);
     List<GroupResponseDto> getGroupsByCourse(Long courseId);
 
 }

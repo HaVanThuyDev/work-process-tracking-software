@@ -7,6 +7,8 @@ import com.example.vn2_ht_student.model.dto.reponse.UserReponseDto;
 import com.example.vn2_ht_student.model.dto.request.RegisterRequest;
 import com.example.vn2_ht_student.model.dto.request.UserRequestDto;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @Service
@@ -18,5 +20,6 @@ public interface UserService {
     List<UserReponseDto> delete (Long id);
     List<UserReponseDto> search(String fullName, String msv);
     UserReponseDto GetDetail(Long id);
+    void importUsersFromExcel(MultipartFile file);
 
 }

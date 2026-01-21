@@ -11,5 +11,5 @@ import java.time.LocalDateTime;
 public class GroupRequestDto {
     private  String groupName;
     private Long courseId;
-    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 }

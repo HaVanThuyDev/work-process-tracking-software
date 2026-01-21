@@ -1,6 +1,5 @@
 package com.example.vn2_ht_student.controller;
 
-
 import com.example.vn2_ht_student.model.entity.ActivityLog;
 import com.example.vn2_ht_student.service.ActivityLogService;
 import lombok.RequiredArgsConstructor;

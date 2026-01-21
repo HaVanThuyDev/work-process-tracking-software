@@ -25,9 +25,14 @@ public class PeerEvaluation {
     private User evaluator;
 
     @ManyToOne
-    @JoinColumn(name = "EVALUATED_ID")
+    @JoinColumn(name = "EVALUATE_THE_ESSAY")
     private User evaluated;
 
     @Column(name = "EVALUATION_DATE")
     private LocalDateTime evaluationDate;
+
+    @Column(name = "SCORE")
+    private String score;
+
+
 }

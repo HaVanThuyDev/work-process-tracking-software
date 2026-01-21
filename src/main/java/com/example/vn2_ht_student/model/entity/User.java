@@ -39,4 +39,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
     private Status status;
+
+    @Column(name ="CLASS_ID ")
+    private String classId;
+
 }
