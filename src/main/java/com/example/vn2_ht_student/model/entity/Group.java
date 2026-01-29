@@ -24,7 +24,7 @@ public class Group extends BaseModifiedEntity {
     private Course course;
 
     @Column(name = "MODIFIED_AT")
-    private LocalDateTime createdAt;
-    
-    private Role role;
+    private LocalDateTime modifiedAt;
+
+
 }

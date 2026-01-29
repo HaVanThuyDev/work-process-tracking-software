@@ -16,7 +16,7 @@ public interface UserService {
     LoginReponseDto login(String gmail, String passwords );
     User register(RegisterRequest request);
     UserDto update(Long id, UserRequestDto userRequestDto);
-    List<UserReponseDto> getAllUsers();
+    List<UserDto> getAllUsers();
     List<UserReponseDto> delete (Long id);
     List<UserReponseDto> search(String fullName, String msv);
     UserReponseDto GetDetail(Long id);

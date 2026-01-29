@@ -24,7 +24,7 @@ public class ContributionScoreController {
             return ResponseEntity.ok(ResponseDTO.builder()
                     .status("ok")
                     .code(Constants.HTTP_STATUS.SUCCESS)
-                    .message("tính thanh cong")
+                    .message("tính điểm thành công")
                     .build());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

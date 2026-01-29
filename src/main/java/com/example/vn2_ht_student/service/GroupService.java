@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface GroupService {
     GroupResponseDto create(GroupRequestDto request);
-    List<GroupResponseDto> getGroupsByCourse(Long courseId);
+    List<GroupResponseDto> getAllGroups();
+    GroupResponseDto update(Long groupId, GroupRequestDto request);
+    void delete(Long groupId);
 
 }

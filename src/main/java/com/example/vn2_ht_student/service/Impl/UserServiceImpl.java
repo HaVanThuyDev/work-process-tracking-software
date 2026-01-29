@@ -9,6 +9,7 @@ import com.example.vn2_ht_student.model.dto.reponse.UserReponseDto;
 import com.example.vn2_ht_student.model.dto.request.RegisterRequest;
 import com.example.vn2_ht_student.model.dto.request.UserRequestDto;
 import com.example.vn2_ht_student.model.enums.Status;
+import com.example.vn2_ht_student.repository.DataSourceRepository;
 import com.example.vn2_ht_student.repository.RolePermissionScopeRepository;
 import com.example.vn2_ht_student.repository.UserRepository;
 import com.example.vn2_ht_student.security.JwtProvider;
@@ -37,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private final JwtProvider jwtProvider;
     private final   PasswordEncoder passwordEncoder;
     private final RolePermissionScopeRepository rolePermissionScopeRepository;
+    private final DataSourceRepository dataSourceRepository;
 
     @Override
     public LoginReponseDto login(String gmail, String passwords) {
@@ -79,10 +81,8 @@ public class UserServiceImpl implements UserService {
         if(request.getFullName() !=null && request.getFullName().isBlank())user.setFullName(request.getFullName());
         if (request.getMsv() !=null && request.getMsv().isBlank())user.setMsv(request.getMsv());
         if(request.getPassword() !=null && request.getPassword().isBlank())user.setPassword(request.getPassword());
-        if (request.getImg() != null) {
-            Long imageId = mediaStorageService.saveBase64ImageAndReturnId(request.getImg());
-            user.setImg(imageId.toString());
-        }
+        String imageUrl = mediaStorageService.saveBase64ImageAndReturnUrl(request.getImg());
+        user.setImg(imageUrl);
         if(request.getImg() !=null && request.getImg().isBlank())user.setImg(request.getImg());
         User User = userRepository.save(user);
         return new UserDto(User);
@@ -90,13 +90,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
 //    @PermissionCheck(resource = {Role.LECTURER,Role.LEADER}, action = Action.STUDENT_VIEW)
-    public List<UserReponseDto> getAllUsers() {
-       return userRepository.findAll().stream().map(user -> {
-           UserReponseDto list=new UserReponseDto(user);
-           return list;
-       } ).toList();
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> {
+                    if (user.getImg() != null && user.getImg().matches("\\d+")) {
+                        dataSourceRepository.findById(Long.valueOf(user.getImg())).ifPresent(ds -> user.setImg(ds.getImageUrl()));
+                    }
+                    return new UserDto(user);
+                })
+                .toList();
     }
-//    @PermissionCheck(resource = Role.LECTURER, action = Action.STUDENT_DELETE)
+
+
+
+    //    @PermissionCheck(resource = Role.LECTURER, action = Action.STUDENT_DELETE)
     @Override
     public List<UserReponseDto> delete(Long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new BadCredentialsException("user not found"));

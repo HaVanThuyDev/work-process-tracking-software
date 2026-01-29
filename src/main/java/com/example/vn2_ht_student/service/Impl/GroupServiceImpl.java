@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.example.vn2_ht_student.repository.custome.GroupMemberCustomRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,6 @@ public class GroupServiceImpl implements GroupService {
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
-    private com.example.vn2_ht_student.model.dto.request.GroupRequestDto GroupRequestDto;
 
     @Override
     public GroupResponseDto create(GroupRequestDto request) {
@@ -44,29 +44,46 @@ public class GroupServiceImpl implements GroupService {
         Group saved = groupRepository.save(group);
         GroupMember leader = new GroupMember();
         leader.setGroup(saved);
-        leader.setUser(user);
+        course.setCreatedBy(String.valueOf(userId));
         groupMemberRepository.save(leader);
         return mapToDto(saved);
     }
 
     @Override
-    public List<GroupResponseDto> getGroupsByCourse(Long courseId) {
-       Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
-       List<Group> gr = groupRepository.findByCourseId(courseId);
-        return gr.stream().map(group -> {
-            GroupResponseDto dto = new GroupResponseDto();
-            dto.setId(group.getId());
-            dto.setGroupName(group.getGroupName());
-            dto.setCourseId(course.getId());
-            return dto;
-        }).collect(Collectors.toList());
+    public List<GroupResponseDto> getAllGroups() {
+        return groupRepository.findAll()
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
-
     private GroupResponseDto mapToDto(Group group) {
+
         GroupResponseDto dto = new GroupResponseDto();
-        dto.setId(group.getId());
         dto.setGroupName(group.getGroupName());
-        dto.setCourseId(group.getCourse().getId());
+        dto.setCreatedAt(group.getCreatedAt());
+        dto.setCreatedBy(group.getCreatedBy());
+        Object[] leaderInfo = groupMemberRepository.findLeaderNameByGroupId(group.getId());
+        if (leaderInfo != null) {
+            dto.setLeaderName((String) leaderInfo[0]);
+            dto.setClassName((String) leaderInfo[1]);
+        }
+
         return dto;
     }
+
+    @Override
+    public GroupResponseDto update(Long groupId, GroupRequestDto request) {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found"));
+        group.setGroupName(request.getGroupName());
+        Group updated = groupRepository.save(group);
+        return mapToDto(updated);
+    }
+    @Override
+    public void delete(Long groupId) {
+        if (!groupRepository.existsById(groupId)) {
+            throw new RuntimeException("Group not found");
+        }
+        groupRepository.deleteById(groupId);
+    }
+
 }

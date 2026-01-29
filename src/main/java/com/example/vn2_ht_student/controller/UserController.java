@@ -2,6 +2,7 @@ package com.example.vn2_ht_student.controller;
 
 
 import com.example.vn2_ht_student.Utils.Constants;
+import com.example.vn2_ht_student.model.dto.UserDto;
 import com.example.vn2_ht_student.model.dto.reponse.ResponseDTO;
 import com.example.vn2_ht_student.model.dto.reponse.UserReponseDto;
 import com.example.vn2_ht_student.model.dto.request.UserRequestDto;
@@ -21,14 +22,20 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/list")
-    public ResponseEntity<List<UserReponseDto>> getAllUsers (){
-        return ResponseEntity.ok((List<UserReponseDto>) ResponseDTO.builder()
-                .status("ok")
-                .code(Constants.HTTP_STATUS.SUCCESS)
-                .data(userService.getAllUsers())
-                .message("lấy danh sách tài khoản thành công")
-                .build());
+    public ResponseEntity<ResponseDTO> getAllUsers() {
+
+        List<UserDto> users = userService.getAllUsers();
+
+        return ResponseEntity.ok(
+                ResponseDTO.builder()
+                        .status("ok")
+                        .code(Constants.HTTP_STATUS.SUCCESS)
+                        .data(users)
+                        .message("Lấy danh sách tài khoản thành công")
+                        .build()
+        );
     }
+
     @PostMapping("/upate/{id}")
     public ResponseEntity<?> update (@PathVariable Long id, @RequestBody UserRequestDto request){
         try {
